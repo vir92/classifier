@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dog/Cat Classifier</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gradio-client/0.1.4/gradio.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,7 +69,9 @@
         <div id="result"></div>
     </div>
 
-    <script>
+    <script type="module">
+        import { Client } from 'https://cdn.jsdelivr.net/npm/@gradio/client@0.12.1/+esm'
+
         const uploadSection = document.querySelector('.upload-section');
         const preview = document.getElementById('preview');
         const result = document.getElementById('result');
@@ -122,14 +123,13 @@
                 loading.style.display = 'block';
                 result.style.display = 'none';
 
-                // Create a new Gradio client
-                const client = new window.gradio.client("https://virej1-testing-classifier.hf.space/");
+                // Create client
+                const client = await Client.connect("virej1/testing_classifier");
                 
                 // Convert file to blob
-                const blob = new Blob([file], { type: file.type });
-                
-                // Make prediction
-                const prediction = await client.predict("/predict", [blob]);
+                const prediction = await client.predict("/predict", { 
+                    img: file
+                });
 
                 loading.style.display = 'none';
                 result.style.display = 'block';
